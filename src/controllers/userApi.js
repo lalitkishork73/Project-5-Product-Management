@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModels");
 const bcrypt = require("bcrypt");
-const {uploadFile}= require('./awsConnect.js');
+const {uploadFile} = require("./awsConnect.js");
 
 const {
   isValid,
@@ -205,7 +205,7 @@ const userRegister = async function (req, res) {
 
     /********************************************** Create Phase **********************************************/
 
-    let userImage = await aws_s3.uploadFile(files[0]);
+    let userImage = await uploadFile(files[0]);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -289,6 +289,8 @@ const loginUser = async function (req, res) {
   }
 };
 
+//<<================================= Get Profile ============================>>//
+
 const getProfile = async function (req, res) {
   try {
     userId = req.body.userId;
@@ -311,11 +313,15 @@ const getProfile = async function (req, res) {
   }
 };
 
+//<<================================= UpdateProfile ============================>>//
+
 const UpdateProfile = async function (req, res) {
   try {
     const userId = req.params.userId;
     const formData = req.files;
     const updateData = req.body;
+
+     const checkFromDb = await userModel.findOne({ _id:userId });
 
     if (!isValidObjectId(userId))
       return res.status(400).send({ status: false, msg: "invalid user Id" });
@@ -330,7 +336,7 @@ const UpdateProfile = async function (req, res) {
     const { address, fname, lname, email, phone, password } = updateData;
 
     if (formData.length !== 0) {
-      let updateProfileImage = await aws.uploadFile(formData[0]);
+      let updateProfileImage = await uploadFile(formData[0]);
       updateData.profileImage = updateProfileImage;
     }
 
@@ -366,9 +372,8 @@ const UpdateProfile = async function (req, res) {
           .status(400)
           .send({ status: false, message: "Invalid Email id." });
 
-      const checkEmailFromDb = await userModel.findOne({ email: email });
 
-      if (checkEmailFromDb) {
+      if (checkFromDb.email) {
         return res.status(400).send({
           status: false,
           message: `emailId is Exists. Please try another email Id.`,
@@ -389,9 +394,7 @@ const UpdateProfile = async function (req, res) {
           message: "Phone number must be a valid Indian number.",
         });
 
-      const checkPhoneFromDb = await userModel.findOne({ phone: phone });
-
-      if (checkPhoneFromDb) {
+      if (checkFromDb.phone) {
         return res.status(400).send({
           status: false,
           message: `${phone} is already in use, Please try a new phone number.`,
@@ -411,6 +414,8 @@ const UpdateProfile = async function (req, res) {
           message: "Password must be of 8-15 letters.",
         });
       }
+
+
     }
 
     if (address) {
@@ -420,9 +425,9 @@ const UpdateProfile = async function (req, res) {
           .send({ status: false, message: " address is not valid" });
       } else if (address) {
         let address1 = JSON.parse(address);
-        const findAddress = await userModel.findOne({ _id: userId });
-        let Shipping = findAddress.address.shipping;
-        let Biling = findAddress.address.billing;
+
+        let Shipping = checkFromDb.address.shipping;
+        let Biling = checkFromDb.address.billing;
 
         if (address1.shipping) {
           const { street, city, pincode } = address1.shipping;
