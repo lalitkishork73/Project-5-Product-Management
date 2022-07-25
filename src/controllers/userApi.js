@@ -19,7 +19,7 @@ const loginUser = async function (req, res) {
     let body = req.body;
     const { email, password } = body;
 
-    if (isValidBody(body)) return res.status(400).send({ status: false, message: "Body Should not be empty" });
+    if (isValidRequestBody(body)) return res.status(400).send({ status: false, message: "Body Should not be empty" });
 
     if (!("email" in body)) return res.status(400).send({ status: false, message: "Please enter email" });
 
@@ -41,7 +41,7 @@ const loginUser = async function (req, res) {
     let decode = jwt.verify(token, "project-5-group27");
     let date = decode.iat;
     let time = new Date(date * 1000).toString();
-    res.status(200).send({ status: true, message: "Successfully loggedin", iat: time, token: token });
+    res.status(200).send({ status: true, message: "Successfully loggedin", userId: user._id, token: token });
 
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
