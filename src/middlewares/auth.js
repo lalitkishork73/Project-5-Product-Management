@@ -27,20 +27,20 @@ const Authentication = async function (req, res, next) {
 const Authorization = async function (req, res, next) {
   try {
     let tokenId = req.userId;
-    let userId = req.params.userId || req.query.userId;
+    let UserId = req.params.userId || req.query.userId;
 
-    if (!isValidObjectId(userId)) {
+    if (!isValidObjectId(UserId)) {
       return res
         .status(400)
-        .send({ status: false, message: `Book id ${userId} is invalid` });
+        .send({ status: false, message: `Book id ${UserId} is invalid` });
     }
-    const findUserId = await userModel.findOne({ _id: userId });
+    const findUserId = await userModel.findOne({ _id: UserId });
     if (!findUserId)
       return res.status(404).send({ status: false, message: "User not found" });
 
-    const { userIdDB } = findUserId;
+    const { userId } = findUserId;
 
-    if (tokenId.toString() !== userIdDB.toString()) {
+    if (tokenId.toString() !== userId.toString()) {
       return res.status(403).send({ status: false, message: "User not Found" });
     }
     next();
