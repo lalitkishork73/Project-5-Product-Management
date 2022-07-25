@@ -14,9 +14,15 @@ const { Authentication, Authorization } = require("../middlewares/auth");
 //------------------- API and Method Routes-------------------//
 
 //------------------- User APIs ------------------------------//
+
+router.get("/test-me", (req, res) => {
+  console.log("runnig..");
+  return res.status(200).send({ status: true, message: "connected" });
+});
+
 router.post("/register", userRegister);
 router.post("/login", loginUser);
-router.get(" /user/:userId/profile", Authentication, getProfile);
+router.get("/user/:userId/profile", Authentication, getProfile);
 router.put(
   "/user/:userId/profile",
   Authentication,

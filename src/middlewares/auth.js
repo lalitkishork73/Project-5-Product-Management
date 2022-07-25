@@ -1,13 +1,14 @@
 const userModel = require("../models/userModels");
 const jwt = require("jsonwebtoken");
-const {} = require("../utils/util");
+const { isValidObjectId } = require("../utils/util");
 
 const Authentication = async function (req, res, next) {
   try {
-    const token = req.header["x-api-key"] || req.header["x-Api-key"];
+    const token = req.headers["x-api-key"] || req.headers["x-Api-key"];
+    console.log(token);
 
     if (!token) {
-      return res.status(404).json({ error: "Invalid Token" });
+      return res.status(404).send({ status: false, message: "Invalid Token" });
     }
     const decodedToken = jwt.verify(token, "project-5-group27");
     let LoginUserId = decodedToken.userId;
@@ -37,8 +38,7 @@ const Authorization = async function (req, res, next) {
     const findUserId = await userModel.findOne({ _id: UserId });
     if (!findUserId)
       return res.status(404).send({ status: false, message: "User not found" });
-
-    const { userId } = findUserId;
+      const userId  = findUserId._id;
 
     if (tokenId.toString() !== userId.toString()) {
       return res.status(403).send({ status: false, message: "User not Found" });
