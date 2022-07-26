@@ -11,6 +11,7 @@ const {
   moblieRegex,
   isValidObjectId,
   isValidPassword,
+  isValidPincode,
 } = require("../utils/util");
 
 //<<================================= User Resgister ============================>>//
@@ -37,7 +38,7 @@ const userRegister = async function (req, res) {
     if (!isValidName(fname))
       return res
         .status(400)
-        .send({ status: false, msg: "Name must contain only alphabates" });
+        .send({ status: false, message: "Name must contain only alphabates" });
 
     if (!isValid(lname)) {
       return res
@@ -48,7 +49,10 @@ const userRegister = async function (req, res) {
     if (!isValidName(lname))
       return res
         .status(400)
-        .send({ status: false, msg: "Last Name must contain only alphabates" });
+        .send({
+          status: false,
+          message: "Last Name must contain only alphabates",
+        });
 
     if (!isValid(email)) {
       return res
@@ -111,20 +115,20 @@ const userRegister = async function (req, res) {
     if (!isValidPassword(password))
       return res.status(400).send({
         status: false,
-        msg: `Password ${password}  must include atleast one special character[@$!%?&], one uppercase, one lowercase, one number and should be mimimum 8 to 15 characters long`,
+        message: `Password ${password}  must include atleast one special character[@$!%?&], one uppercase, one lowercase, one number and should be mimimum 8 to 15 characters long`,
       });
 
     if (!isValid(address))
       return res
         .status(400)
-        .send({ status: false, msg: "Address is a mandatory field" });
+        .send({ status: false, message: "Address is a mandatory field" });
     address = JSON.parse(address);
     console.log(address.shipping.street);
 
     if (!isValid(address.shipping) || !isValid(address.billing))
       return res.status(400).send({
         status: false,
-        msg: "Shipping and Billing address are mandatory field",
+        message: "Shipping and Billing address are mandatory field",
       });
 
     if (
@@ -134,9 +138,13 @@ const userRegister = async function (req, res) {
     )
       return res.status(400).send({
         status: false,
-        msg: "Street, city and pincode are mandatory in Shipping",
+        message: "Street, city and pincode are mandatory in Shipping",
       });
 
+    /* if(!isValidPincode(pincode)){
+        return res.status(400).send({status: false,message:"Please Provide valid pincode"});
+       }
+ */
     if (
       !isValid(address.billing.street) ||
       !isValid(address.billing.city) ||
@@ -144,7 +152,7 @@ const userRegister = async function (req, res) {
     )
       return res.status(400).send({
         status: false,
-        msg: "Street, city and pincode are mandatory in Billing",
+        message: "Street, city and pincode are mandatory in Billing",
       });
 
     /********************************************** Create Phase **********************************************/
@@ -195,11 +203,6 @@ const loginUser = async function (req, res) {
         .status(400)
         .send({ status: false, message: "Please enter email" });
 
-    if (!password)
-      return res
-        .status(400)
-        .send({ status: false, message: "Please enter password" });
-
     if (!isValid(email))
       return res
         .status(400)
@@ -210,35 +213,56 @@ const loginUser = async function (req, res) {
         .status(400)
         .send({ status: false, message: "Please enter valid email" });
 
+    if (!password)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please enter password" });
+
     if (!isValid(password))
       return res
         .status(400)
         .send({ status: false, message: "Password should not be empty" });
 
-    let user = await userModel.findOne({ email: email, password: password });
+    let user = await userModel.findOne({ email: email });
 
     if (!user)
       return res
         .status(401)
         .send({ status: false, message: "Please use valid credentials" });
 
-    let token = jwt.sign(
-      {
-        userId: user._id.toString(),
-        Project: "Product Management",
-        Group: "27",
-      },
-      "project-5-group27",
-      { expiresIn: "24h" }
-    );
-    res.setHeader("x-api-key", token);
-
-    return res.status(200).send({
-      status: true,
-      message: "Successfully loggedin",
-      userId: user._id,
-      token: token,
+    bcrypt.compare(password, user.password, function (err, result) {
+      hasAccess(result);
     });
+    function hasAccess(result) {
+      if (result) {
+        // insert login code here
+        console.log("Access Granted!");
+        let token = jwt.sign(
+          {
+            userId: user._id.toString(),
+            Project: "Product Management",
+            Group: "27",
+          },
+          "project-5-group27",
+          { expiresIn: "24h" }
+        );
+        res.setHeader("x-api-key", token);
+
+        return res.status(200).send({
+          status: true,
+          message: "Successfully loggedin",
+          userId: user._id,
+          token: token,
+        });
+      } else {
+        // insert access denied code here
+        console.log("Access Denied!");
+        return res.status(400).send({
+          status: false,
+          message: "loggeding denied ",
+        });
+      }
+    }
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
@@ -279,17 +303,20 @@ const UpdateProfile = async function (req, res) {
     const updateData = req.body;
 
     const checkFromDb = await userModel.findOne({ _id: userId });
+    console.log(checkFromDb.phone);
 
     if (!isValidObjectId(userId))
-      return res.status(400).send({ status: false, msg: "invalid user Id" });
+      return res
+        .status(400)
+        .send({ status: false, message: "invalid user Id" });
     let findUserId = await userModel.findOne({ _id: userId });
     if (!findUserId)
-      return res.status(404).send({ status: false, msg: "user not found" });
+      return res.status(404).send({ status: false, message: "user not found" });
 
     if (!isValidRequestBody(updateData) && !formData)
       return res
         .status(400)
-        .send({ status: false, msg: "please provide data to update" });
+        .send({ status: false, message: "please provide data to update" });
     const { address, fname, lname, email, phone, password } = updateData;
 
     if (formData.length !== 0) {
@@ -319,17 +346,12 @@ const UpdateProfile = async function (req, res) {
           .send({ status: false, message: "Email-ID is required" });
       }
 
-      if (!isValidEmail(email))
+      if (!isvalidEmail(email))
         return res
           .status(400)
           .send({ status: false, message: "Invalid Email id." });
 
-      if (!isValidEmail(email))
-        return res
-          .status(400)
-          .send({ status: false, message: "Invalid Email id." });
-
-      if (checkFromDb.email) {
+      if (!checkFromDb.email) {
         return res.status(400).send({
           status: false,
           message: `emailId is Exists. Please try another email Id.`,
@@ -350,7 +372,7 @@ const UpdateProfile = async function (req, res) {
           message: "Phone number must be a valid Indian number.",
         });
 
-      if (checkFromDb.phone) {
+      if (!checkFromDb.phone) {
         return res.status(400).send({
           status: false,
           message: `${phone} is already in use, Please try a new phone number.`,
@@ -380,57 +402,72 @@ const UpdateProfile = async function (req, res) {
           .status(400)
           .send({ status: false, message: " address is not valid" });
       } else if (address) {
-        let address1 = JSON.parse(address);
+        // let address1 = JSON.parse(address);
 
         let Shipping = checkFromDb.address.shipping;
         let Biling = checkFromDb.address.billing;
 
-        if (address1.shipping) {
-          const { street, city, pincode } = address1.shipping;
+        if (address.shipping) {
+          const { street, city, pincode } = address.shipping;
           if (street) {
             if (!isValid(street))
               return res
                 .status(400)
-                .send({ status: false, msg: "shipping street is not valid " });
+                .send({
+                  status: false,
+                  message: "shipping street is not valid ",
+                });
             Shipping.street = street;
           }
           if (city) {
             if (!isValid(city))
               return res
                 .status(400)
-                .send({ status: false, msg: "shipping city is not valid " });
+                .send({
+                  status: false,
+                  message: "shipping city is not valid ",
+                });
             Shipping.city = city;
           }
           if (pincode) {
             if (!isValid(pincode))
               return res
                 .status(400)
-                .send({ status: false, msg: "shipping pincode is not valid " });
+                .send({
+                  status: false,
+                  message: "shipping pincode is not valid ",
+                });
             Shipping.pincode = pincode;
           }
         }
 
-        if (address1.billing) {
-          const { street, city, pincode } = address1.billing;
+        if (address.billing) {
+          const { street, city, pincode } = address.billing;
           if (street) {
             if (!isValid(street))
               return res
                 .status(400)
-                .send({ status: false, msg: "billing street is not valid " });
+                .send({
+                  status: false,
+                  message: "billing street is not valid ",
+                });
             Biling.street = street;
           }
           if (city) {
             if (!isValid(city))
               return res
                 .status(400)
-                .send({ status: false, msg: "billing city is not valid " });
+                .send({ status: false, message: "billing city is not valid " });
             Biling.city = city;
           }
           if (pincode) {
             if (!isValid(pincode))
               return res
                 .status(400)
-                .send({ status: false, msg: "billing pincode is not valid " });
+                .send({
+                  status: false,
+                  message: "billing pincode is not valid ",
+                });
             Biling.pincode = pincode;
           }
         }
@@ -438,11 +475,32 @@ const UpdateProfile = async function (req, res) {
       }
     }
 
+    let dataNew = {
+      fname: fname,
+      lname: lname,
+      email: email,
+      phone: phone,
+      password: password,
+    };
+
     const UpdateProfile = await userModel.findOneAndUpdate(
       { _id: userId },
-      { updateData },
+      dataNew,
       { new: true }
     );
+    /* .select({
+        address: 1,
+        _id: 1,
+        fname: 1,
+        lname: 1,
+        email: 1,
+        profileImage: 1,
+        phone: 1,
+        password: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        __v: 1,
+      }); */
     return res.status(200).send({
       status: true,
       message: "User profile updated successfully",

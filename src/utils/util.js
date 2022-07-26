@@ -13,7 +13,7 @@ const isValid = function (value) {
 };
 
 const isvalidEmail = function (gmail) {
-  let regex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/; //.test(gmail);
+  let regex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
   return regex.test(gmail);
 };
 
@@ -39,6 +39,8 @@ let isValidObjectId = function (objectId) {
   return true;
 };
 
+let isValidPincode = function(pincode) { let regexpincode = /^[0-9]{6}$/; return regexpincode.test(pincode); };
+
 module.exports = {
   isValid,
   isValidRequestBody,
@@ -47,4 +49,5 @@ module.exports = {
   moblieRegex,
   isValidObjectId,
   isValidPassword,
+  isValidPincode
 };
