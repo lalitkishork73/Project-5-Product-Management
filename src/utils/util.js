@@ -40,6 +40,10 @@ let isValidObjectId = function (objectId) {
 };
 
 let isValidPincode = function(pincode) { let regexpincode = /^[0-9]{6}$/; return regexpincode.test(pincode); };
+const validString = function (value) {
+        if (typeof value === 'string' && value.trim().length === 0) return false 
+        return true;
+    }
 
 module.exports = {
   isValid,
@@ -49,5 +53,5 @@ module.exports = {
   moblieRegex,
   isValidObjectId,
   isValidPassword,
-  isValidPincode
+  isValidPincode, validString
 };
