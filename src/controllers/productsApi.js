@@ -1,5 +1,5 @@
 const productModel = require("../models/productModel");
-const {validString} = require("../utils/util");
+const {validString,isValid,isValidObjectId} = require("../utils/util");
 
 //<<============================ Create  Product  ==============================>>//
 
@@ -180,7 +180,7 @@ const deleteProductbyId = async function (req, res) {
 
     return res.status(200).send({
       status: true,
-      message: "Deleted Successfully",  
+      message: "Deleted Successfully",
       data: findProductDb,
     });
   } catch (err) {
