@@ -40,9 +40,11 @@ const getProductbyId = async function (req, res) {
       return res.status(404).send({ status: false, message: "Data Not Found" });
     }
 
-    return res
-      .status(200)
-      .send({ status: true, message: "success", data: findProductDb });
+    return res.status(200).send({
+      status: true,
+      message: "Deleted Successfully",
+      data: findProductDb,
+    });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
@@ -61,6 +63,33 @@ const updateProductbyId = async function (req, res) {
 
 const deleteProductbyId = async function (req, res) {
   try {
+    let Pid = req.params.productId;
+
+    if (!isValid(Pid) && !isValidObjectId(Pid)) {
+      return res.status(400).send({
+        status: false,
+        message: "Invalid Product ID please Provide Valid Credential",
+      });
+    }
+
+    const findProductDb = await productModel.findOneAndDelete(
+      {
+        _id: Pid,
+        isDeleted: false,
+      },
+      { isDeleted: true, deletedAt: new Data() },
+      { new: true }
+    );
+
+    if (!findProductDb) {
+      return res
+        .status(404)
+        .send({ status: false, message: "Data Not Found Or Already Deleted" });
+    }
+
+    return res
+      .status(200)
+      .send({ status: true, message: "success", data: findProductDb });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
