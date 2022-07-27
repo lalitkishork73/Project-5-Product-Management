@@ -16,6 +16,8 @@ const getProducts = async function (req, res) {
 
 const getProductbyId = async function (req, res) {
   try {
+    let Pid= req.params.
+
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
