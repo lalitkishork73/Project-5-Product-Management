@@ -42,7 +42,7 @@ const getProductbyId = async function (req, res) {
 
     return res.status(200).send({
       status: true,
-      message: "Deleted Successfully",
+      message: "Success",
       data: findProductDb,
     });
   } catch (err) {
@@ -87,9 +87,11 @@ const deleteProductbyId = async function (req, res) {
         .send({ status: false, message: "Data Not Found Or Already Deleted" });
     }
 
-    return res
-      .status(200)
-      .send({ status: true, message: "success", data: findProductDb });
+    return res.status(200).send({
+      status: true,
+      message: "Deleted Successfully",  
+      data: findProductDb,
+    });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
