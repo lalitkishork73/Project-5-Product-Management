@@ -9,16 +9,19 @@ const {
   UpdateProfile,
 } = require("../controllers/userApi");
 
+const {
+  createProducts,
+  getProducts,
+  getProductbyId,
+  updateProductbyId,
+  deleteProductbyId,
+} = require("../controllers/productsApi");
+
 const { Authentication, Authorization } = require("../middlewares/auth");
 
 //------------------- API and Method Routes-------------------//
 
 //------------------- User APIs ------------------------------//
-
-router.get("/test-me", (req, res) => {
-  console.log("runnig..");
-  return res.status(200).send({ status: true, message: "connected" });
-});
 
 router.post("/register", userRegister);
 router.post("/login", loginUser);
@@ -29,6 +32,14 @@ router.put(
   Authorization,
   UpdateProfile
 );
+
+//-------------------------- Product APIs ----------------------//
+
+router.post("/products", createProducts);
+router.get("/products", getProducts);
+router.get("/products/:productId", getProductbyId);
+router.put("/products/:productId", updateProductbyId);
+router.delete("/products/:productId", deleteProductbyId);
 
 //------------------- Exporting Modules -------------------//
 
