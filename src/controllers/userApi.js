@@ -47,12 +47,10 @@ const userRegister = async function (req, res) {
     }
 
     if (!isValidName(lname))
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "Last Name must contain only alphabates",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "Last Name must contain only alphabates",
+      });
 
     if (!isValid(email)) {
       return res
@@ -302,6 +300,10 @@ const UpdateProfile = async function (req, res) {
     const formData = req.files;
     const updateData = req.body;
 
+    let data = {
+      isDeleted: false,
+    };
+    console.log(data)
     const checkFromDb = await userModel.findOne({ _id: userId });
     console.log(checkFromDb.phone);
 
@@ -317,11 +319,12 @@ const UpdateProfile = async function (req, res) {
       return res
         .status(400)
         .send({ status: false, message: "please provide data to update" });
-    const { address, fname, lname, email, phone, password } = updateData;
+    const { fname, lname, email, phone, password } = updateData;
+    let address = req.body.address;
 
     if (formData.length !== 0) {
       let updateProfileImage = await uploadFile(formData[0]);
-      updateData.profileImage = updateProfileImage;
+      data["profileImage"] = updateProfileImage;
     }
 
     if (fname) {
@@ -393,7 +396,7 @@ const UpdateProfile = async function (req, res) {
         });
       }
 
-      updateData.password = await bcrypt.hash(password, 10);
+      data["password"] = await bcrypt.hash(password, 10);
     }
 
     if (address) {
@@ -402,105 +405,77 @@ const UpdateProfile = async function (req, res) {
           .status(400)
           .send({ status: false, message: " address is not valid" });
       } else if (address) {
-        // let address1 = JSON.parse(address);
+        let address1 = JSON.parse(address);
 
-        let Shipping = checkFromDb.address.shipping;
-        let Biling = checkFromDb.address.billing;
-
-        if (address.shipping) {
-          const { street, city, pincode } = address.shipping;
+        if (address1.shipping) {
+          const { street, city, pincode } = address1.shipping;
           if (street) {
             if (!isValid(street))
-              return res
-                .status(400)
-                .send({
-                  status: false,
-                  message: "shipping street is not valid ",
-                });
-            Shipping.street = street;
+              return res.status(400).send({
+                status: false,
+                message: "shipping street is not valid ",
+              });
+            data["address.shipping.street"] = street;
+
+            console.log(street);
           }
           if (city) {
             if (!isValid(city))
-              return res
-                .status(400)
-                .send({
-                  status: false,
-                  message: "shipping city is not valid ",
-                });
-            Shipping.city = city;
+              return res.status(400).send({
+                status: false,
+                message: "shipping city is not valid "
+              });
+            data["address.shipping.city"] = city;
           }
+        
           if (pincode) {
             if (!isValid(pincode))
-              return res
-                .status(400)
-                .send({
-                  status: false,
-                  message: "shipping pincode is not valid ",
-                });
-            Shipping.pincode = pincode;
+              return res.status(400).send({
+                status: false,
+                message: "shipping pincode is not valid ",
+              });
+            data["address.shipping.pincode"] = pincode;
           }
         }
 
-        if (address.billing) {
-          const { street, city, pincode } = address.billing;
+        if (address1.billing) {
+          const { street, city, pincode } = address1.billing;
+
           if (street) {
             if (!isValid(street))
-              return res
-                .status(400)
-                .send({
-                  status: false,
-                  message: "billing street is not valid ",
-                });
-            Biling.street = street;
+              return res.status(400).send({
+                status: false,
+                message: "billing street is not valid ",
+              });
+            data["address.billing.street"] = street;
           }
           if (city) {
             if (!isValid(city))
               return res
                 .status(400)
                 .send({ status: false, message: "billing city is not valid " });
-            Biling.city = city;
+            data["address.billing.city"] = city;
           }
           if (pincode) {
             if (!isValid(pincode))
-              return res
-                .status(400)
-                .send({
-                  status: false,
-                  message: "billing pincode is not valid ",
-                });
-            Biling.pincode = pincode;
+              return res.status(400).send({
+                status: false,
+                message: "billing pincode is not valid ",
+              });
+            data["address.billing.pincode"] = pincode;
           }
         }
-        updateData.address = findAddress.address;
+        //  data["address"] = address1;
       }
     }
-
-    let dataNew = {
-      fname: fname,
-      lname: lname,
-      email: email,
-      phone: phone,
-      password: password,
-    };
+    console.log(data)
 
     const UpdateProfile = await userModel.findOneAndUpdate(
       { _id: userId },
-      dataNew,
+      data,
       { new: true }
     );
-    /* .select({
-        address: 1,
-        _id: 1,
-        fname: 1,
-        lname: 1,
-        email: 1,
-        profileImage: 1,
-        phone: 1,
-        password: 1,
-        createdAt: 1,
-        updatedAt: 1,
-        __v: 1,
-      }); */
+
     return res.status(200).send({
       status: true,
       message: "User profile updated successfully",
