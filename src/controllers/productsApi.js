@@ -22,6 +22,8 @@ const createProducts = async function(req, res) {
             price,
             currencyId,
             currencyFormat,
+            style,
+            installments,
             availableSizes,
         } = data;
 
@@ -503,7 +505,6 @@ const deleteProductbyId = async function(req, res) {
         return res.status(500).send({ status: false, message: err.message });
     }
 };
-
 module.exports = {
     createProducts,
     getProducts,
