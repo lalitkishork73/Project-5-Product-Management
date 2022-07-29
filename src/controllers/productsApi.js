@@ -311,148 +311,83 @@ const getProductbyId = async function (req, res) {
 
 const updateProductbyId = async function (req, res) {
   try {
-    let id = req.params.productId;
-    if (!isValidObjectId(id))
-      return res
-        .status(400)
-        .send({ status: false, message: "Enter Id in valid Format" });
+    let productId = req.params.productId
+    if (productId.length == 0 || productId == ':productId') return res.status(400).send({ status: false, message: "Please enter productId in params" })
+    if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "Enter Id in valid Format" })
 
-    let data = await productModel.findById(id);
-    if (!data)
-      return res
-        .status(404)
-        .send({ status: false, message: "No Data found wih this ID" });
-    if (data.isDeleted == true) {
-      return res
-        .status(404)
-        .send({ status: false, message: "This product is Deleted" });
-    }
+    let data = await productModel.findById(productId)
+    if (!data) return res.status(404).send({ status: false, message: "No Data found with this ID" })
+    if (data.isDeleted == true) { return res.status(404).send({ status: false, message: "This product is Deleted" }) }
 
-    let body = req.body;
-    let files = req.files;
+    let body = req.body
+    let files = req.files
     if (!files) {
-      if (isValidBody(body))
-        return res
-          .status(400)
-          .send({ status: false, message: "Pls enter Some Data To update" });
+      if (isValidBody(body)) return res.status(400).send({ status: false, message: "Pls enter Some Data To update" })
     }
-    let {
-      title,
-      description,
-      price,
-      productImage,
-      style,
-      availableSizes,
-      installments,
-    } = body;
+    let { title, description, price, productImage, style, availableSizes, installments, isFreeShipping } = body
 
     if ("title" in body) {
-      if (!isValid(title))
-        return res
-          .status(400)
-          .send({ status: false, message: "Title should not be empty" });
-      if (!isValidTName(title))
-        return res
-          .status(400)
-          .send({ status: false, message: "Enter Valid Title Name" });
-      if (await productModel.findOne({ title: title }))
-        return res
-          .status(400)
-          .send({ status: false, message: `${title} is already exists` });
-      data.title = title;
+      if (!isValid(title)) return res.status(400).send({ status: false, message: "Title should not be empty" })
+      if (!isValidTName(title)) return res.status(400).send({ status: false, message: "Enter Valid Title Name" })
+      if (await productModel.findOne({ title: title })) return res.status(400).send({ status: false, message: `${title} is already exists` })
+      let title1 = title.split(" ").filter(e => e).join(" ")
+      data.title = title1
     }
     if ("description" in body) {
-      if (!isValid(description))
-        return res
-          .status(400)
-          .send({ status: false, message: "Description should not be empty" });
-      data.description = description;
+      if (!isValid(description)) return res.status(400).send({ status: false, message: "Description should not be empty" })
+      data.description = description.split(" ").filter(e => e).join(" ")
     }
     if ("price" in body) {
-      if (!isValid(price))
-        return res
-          .status(400)
-          .send({ status: false, message: "Price should not be empty" });
-      data.price = price;
+      if (!isValid(price)) return res.status(400).send({ status: false, message: "Price should not be empty" })
+      if (isNaN(parseInt(price))) return res.status(400).send({ status: false, message: "Price Should Be A Number" })
+      data.price = price
     }
+
     if ("isFreeShipping" in body) {
-      if (!isValid(isFreeShipping))
-        return res
-          .status(400)
-          .send({
-            status: false,
-            message: "isFreeShipping should not be empty",
-          });
-      if (typeof isFreeShipping !== "boolean")
-        return res
-          .status(400)
-          .send({
-            status: false,
-            message: "isFreeShipping should be only True False",
-          });
-      data.isFreeShipping = isFreeShipping;
+      if (!isValid(isFreeShipping)) return res.status(400).send({ status: false, message: "isFreeShipping should not be empty" })
+      if (!(isFreeShipping.toLowerCase() === "true" || isFreeShipping.toLowerCase() === "false")) return res.status(400).send({ status: false, message: "isFreeShipping should be only True False" })
+      data.isFreeShipping = isFreeShipping.toLowerCase()
     }
+    if (typeof productImage === "string" || typeof productImage === "object") return res.status(400).send({ status: false, message: "ProductImg should be of typeFiles" })
     if (files && files.length > 0) {
-      if (!isValidImg(files[0].mimetype)) {
-        return res
-          .status(400)
-          .send({
-            status: false,
-            message: "Image Should be of JPEG/ JPG/ PNG",
-          });
+      if (!(isValidImg(files[0].mimetype))) {
+        return res.status(400).send({ status: false, message: "Image Should be of JPEG/ JPG/ PNG" })
       }
-      let uploadedFileURL = await uploadFile(files[0]);
-      data.productImage = uploadedFileURL;
+      let uploadedFileURL = await uploadFile(files[0])
+      data.productImage = uploadedFileURL
     }
     if ("style" in body) {
-      if (!isValid(style))
-        return res
-          .status(400)
-          .send({ status: false, message: "Style should not be empty" });
-      if (!isValidTName(style))
-        return res
-          .status(400)
-          .send({ status: false, message: "Pls Enter Valid Style Category" });
-      data.style = style;
+      if (!isValid(style)) return res.status(400).send({ status: false, message: "Style should not be empty" })
+      if (!isValidTName(style)) return res.status(400).send({ status: false, message: "Pls Enter Valid Style Category" })
+      data.style = style
     }
     if ("availableSizes" in body) {
-      if (!isValid(availableSizes))
-        return res
-          .status(400)
-          .send({
-            status: false,
-            message: "AvailableSizes should not be empty",
-          });
-      if (!isValidSize(availableSizes))
-        return res
-          .status(400)
-          .send({
-            status: false,
-            message:
-              " Sizes should be from these ['S', 'XS','M','X', 'L','XXL','XL']",
-          });
-      data.availableSizes = availableSizes;
+      if (!isValid(availableSizes)) return res.status(400).send({ status: false, message: "AvailableSizes should not be empty" })
+      let sizes = availableSizes.toUpperCase().trim().split(",").map(e => e.trim())
+      for (let i = 0; i < sizes.length; i++) {
+        if (!isValidSize(sizes[i])) return res.status(400).send({ status: false, message: `This Size ( ${sizes[i]} ) is not from these ['S', 'XS','M','X', 'L','XXL','XL']` })
+      }
+      let savedSize = await productModel.findById(id).select({ availableSizes: 1, _id: 0 })
+      let value = savedSize["availableSizes"].valueOf()
+      for (let i = 0; i < sizes.length; i++) {
+        if (value.includes(sizes[i])) {
+          return res.status(400).send({ status: false, message: `Size ${sizes[i]} is already Exists Choose Another One` })
+        }
+        else {
+          let savedata = await productModel.findOneAndUpdate({ _id: id }, { $push: { availableSizes: sizes[i] } }, { new: true })
+          data.availableSizes = savedata.availableSizes
+        }
+      }
     }
 
     if ("installments" in body) {
-      if (!isValid(installments))
-        return res
-          .status(400)
-          .send({ status: false, message: "installments should not be empty" });
-      if (typeof installments !== Number)
-        return res
-          .status(400)
-          .send({
-            status: false,
-            message: "Installments Should be Of Number Type",
-          });
-      data.installments = installments;
+      if (!isValid(installments)) return res.status(400).send({ status: false, message: "installments should not be empty" })
+      if (isNaN(parseInt(installments))) return res.status(400).send({ status: false, message: "Installments Should be Of Number Type" })
+      data.installments = installments
     }
 
-    data.save();
-    res
-      .status(200)
-      .send({ status: true, message: "Updated Successfully", data: data });
+    data.save()
+    res.status(200).send({ status: false, message: "Updated Successfully", data: data })
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
