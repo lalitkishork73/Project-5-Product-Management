@@ -112,9 +112,9 @@ const createProducts = async function (req, res) {
     }
 
     let sizes = availableSizes.toUpperCase().trim().split(",").map(e => e.trim())
-        for (let i = 0; i < sizes.length; i++) {
-            if (!isValidSize(sizes[i])) { return res.status(400).send({ status: false, message: `The size accepted only from these (${sizes[i]}) S, XS, M, X, L, XXL, XL" ` }) }
-        }
+        // for (let i = 0; i < sizes.length; i++) {
+        //     if (!isValidSize(sizes[i])) { return res.status(400).send({ status: false, message: `The size accepted only from these (${sizes[i]}) S, XS, M, X, L, XXL, XL" ` }) }
+        // }
         data.availableSizes = sizes
 
     const createdProduct = await productModel.create(data);
@@ -132,101 +132,101 @@ const createProducts = async function (req, res) {
 // multiple queries not filtering properly
 const getProducts = async function (req, res) {
   try {
-    const inputs = req.query;
+    const queryData = req.query;
 
     let filterData = {};
     filterData.isDeleted = false;
 
-    if (!validString(inputs.size)) {
+    if (!validString(queryData.size)) {
       return res
         .status(400)
         .send({ status: false, msg: "Please Provide a Valid Size!" });
     }
-    if (inputs.size) {
-      let sizes = inputs.size.split(",").map((x) => x.trim());
-      filterData["availableSizes"] = sizes;
+    if (queryData.size) {
+      let sizes = queryData.size.split(",").map((x) => x.trim());
+      filterData.availableSizes = sizes;
     }
 
-    if (!validString(inputs.name)) {
+    if (!validString(queryData.name)) {
       return res
         .status(400)
         .send({ status: false, msg: "Please Provide a Name Of the Product!" });
     }
 
-    if (inputs.name) {
+    if (queryData.name) {
       filterData["title"] = {};
-      filterData["title"]["$regex"] = inputs.name; //$regex to match the subString
+      filterData["title"]["$regex"] = queryData.name; //$regex to match the subString
       filterData["title"]["$options"] = "i"; //"i" for case insensitive.
     }
-
-    if (!validString(inputs.priceGreaterThan)) {
+    // price > 300
+    if (!validString(queryData.priceGreaterThan)) {
       return res.status(400).send({
         status: false,
         msg: "Please Provide a Lowest Price Of the Product!",
       });
     }
-    if (!validString(inputs.priceLessThan)) {
+    if (!validString(queryData.priceLessThan)) {
       return res.status(400).send({
         status: false,
         msg: "Please Provide a Highest Price Of the Product!",
       });
     }
-    if (inputs.priceGreaterThan || inputs.priceLessThan) {
+    if (queryData.priceGreaterThan || queryData.priceLessThan) {
       filterData.price = {};
 
-      if (inputs.priceGreaterThan) {
-        if (isNaN(Number(inputs.priceGreaterThan))) {
+      if (queryData.priceGreaterThan) {
+        if (isNaN(Number(queryData.priceGreaterThan))) {
           return res.status(400).send({
             status: false,
             message: `priceGreaterThan should be a valid number`,
           });
         }
-        if (inputs.priceGreaterThan <= 0) {
+        if (queryData.priceGreaterThan <= 0) {
           return res.status(400).send({
             status: false,
             message: `priceGreaterThan shouldn't be 0 or-ve number`,
           });
         }
 
-        filterData["price"]["$gte"] = Number(inputs.priceGreaterThan);
+        filterData["price"]["$gte"] = Number(queryData.priceGreaterThan);   //{price: {$gte: {400}}}
       }
 
-      if (inputs.priceLessThan) {
-        if (isNaN(Number(inputs.priceLessThan))) {
+      if (queryData.priceLessThan) {
+        if (isNaN(Number(queryData.priceLessThan))) {
           return res.status(400).send({
             status: false,
             message: `priceLessThan should be a valid number`,
           });
         }
-        if (inputs.priceLessThan <= 0) {
+        if (queryData.priceLessThan <= 0) {
           return res.status(400).send({
             status: false,
             message: `priceLessThan can't be 0 or -ve`,
           });
         }
 
-        filterData["price"]["$lte"] = Number(inputs.priceLessThan);
+        filterData["price"]["$lte"] = Number(queryData.priceLessThan); //{price: {$lte: {400}}}
       }
     }
 
-    if (!validString(inputs.priceSort)) {
+    if (!validString(queryData.priceSort)) {
       return res.status(400).send({
         status: false,
         msg: "Please Sort 1 for Ascending -1 for Descending order!",
       });
     }
 
-    if (inputs.priceSort) {
-      if (!(inputs.priceSort == 1 || inputs.priceSort == -1)) {
+    if (queryData.priceSort) {
+      if (!(queryData.priceSort == 1 || queryData.priceSort == -1)) {
         return res
           .status(400)
-          .send({ status: false, message: `priceSort should be 1 or -1 ` });
+          .send({ status: false, message: `priceSort should be 1 (for ascending order) or -1 (for descending order) ` });
       }
 
-      console.log(filterData);
+      //console.log(filterData);
       const products = await productModel
         .find(filterData)
-        .sort({ price: inputs.priceSort });
+        .sort({ price: queryData.priceSort });
 
       if (!products.length) {
         return res
@@ -253,7 +253,7 @@ const getProducts = async function (req, res) {
         status: true,
         message: "Product list",
         data: products,
-        p: products.length,
+        p: products.length, // for testing
       });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
@@ -354,15 +354,15 @@ const updateProductbyId = async function (req, res) {
       }
       let savedSize = await productModel.findById(productId).select({ availableSizes: 1, _id: 0 })
       let value = savedSize["availableSizes"].valueOf()
-      for (let i = 0; i < sizes.length; i++) {
-        if (value.includes(sizes[i])) {
-          return res.status(400).send({ status: false, message: `Size ${sizes[i]} is already Exists Choose Another One` })
-        }
-        else {
-          let savedata = await productModel.findOneAndUpdate({ _id: productId }, { $push: { availableSizes: sizes[i] } }, { new: true })
+      //for (let i = 0; i < sizes.length; i++) {
+        // if (value.includes(sizes[i])) {
+        //   return res.status(400).send({ status: false, message: `Size ${sizes[i]} is already Exists Choose Another One` })
+        // }
+        // else {
+          let savedata = await productModel.findOneAndUpdate({ _id: productId }, { availableSizes: sizes }, { new: true })
           data.availableSizes = savedata.availableSizes
-        }
-      }
+        //}
+      //}
     }
 
     if ("installments" in body) {
