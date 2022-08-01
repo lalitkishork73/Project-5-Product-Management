@@ -26,12 +26,7 @@ const { Authentication, Authorization } = require("../middlewares/auth");
 router.post("/register", userRegister);
 router.post("/login", loginUser);
 router.get("/user/:userId/profile", Authentication, getProfile);
-router.put(
-  "/user/:userId/profile",
-  Authentication,
-  Authorization,
-  UpdateProfile
-);
+router.put("/user/:userId/profile", Authentication, Authorization, UpdateProfile);
 
 //-------------------------- Product APIs ----------------------//
 

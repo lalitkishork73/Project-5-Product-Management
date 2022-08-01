@@ -11,7 +11,7 @@ const {
 const { uploadFile } = require("./awsConnect");
 
 //<<============================ Create  Product  ==============================>>//
-// enum is not supported 
+
 const createProducts = async function (req, res) {
   try {
     let data = req.body;
