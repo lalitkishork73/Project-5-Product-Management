@@ -17,6 +17,13 @@ const {
   deleteProductbyId,
 } = require("../controllers/productsApi");
 
+const {
+  createCart,
+  updateCart,
+  getCart,
+  deleteCart
+} = require("../controllers/cartApi");
+
 const { Authentication, Authorization } = require("../middlewares/auth");
 
 //------------------- API and Method Routes-------------------//
@@ -35,6 +42,14 @@ router.get("/products", getProducts);
 router.get("/products/:productId", getProductbyId);
 router.put("/products/:productId", updateProductbyId);
 router.delete("/products/:productId", deleteProductbyId);
+
+
+//-------------------------- Cart APIs ----------------------//
+router.post("/users/:userId/cart", Authentication, Authorization, createCart)
+router.put("/users/:userId/cart", updateCart)
+router.get("/users/:userId/cart", Authentication, Authorization, getCart)
+router.delete("/users/:userId/cart", Authentication, Authorization, deleteCart)
+
 
 //------------------- Exporting Modules -------------------//
 
