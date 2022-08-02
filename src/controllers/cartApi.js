@@ -245,11 +245,12 @@ const deleteCart = async function (req, res) {
         msg: "No such user found. Please register and try again",
       });
     }
-    let updatedUserCart = await cartModel.findOneAndUpdate(
-      { userId: userId },
-      { items: [], totalPrice: 0, totalItems: 0 },
-      { new: true }
-    );
+    usercart.userId = userId;
+    usercart.items = [];
+    usercart.totalPrice = 0;
+    usercart.totalItems = 0;
+    usercart.save();
+
     return res.status(200).send({ status: true });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });

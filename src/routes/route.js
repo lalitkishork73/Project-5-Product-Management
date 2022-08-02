@@ -52,8 +52,8 @@ router.delete("/products/:productId", deleteProductbyId);
 
 router.post("/users/:userId/cart", createCart);
 router.put("/users/:userId/cart", Authentication, updateCart);
-router.get("/users/:userId/cart", Authentication, getCart);
-router.delete("/users/:userId/cart", Authentication, deleteCart);
+router.get("/users/:userId/cart", getCart);
+router.delete("/users/:userId/cart", deleteCart);
 
 //------------------- Exporting Modules -------------------//
 
