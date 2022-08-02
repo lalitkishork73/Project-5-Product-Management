@@ -51,7 +51,7 @@ router.delete("/products/:productId", deleteProductbyId);
 //-------------------------- Cart APIs ----------------------//
 
 router.post("/users/:userId/cart", createCart);
-router.put("/users/:userId/cart", Authentication, updateCart);
+router.put("/users/:userId/cart", updateCart);
 router.get("/users/:userId/cart", getCart);
 router.delete("/users/:userId/cart", deleteCart);
 
