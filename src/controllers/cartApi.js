@@ -27,7 +27,7 @@ const updateCart = async function (req, res) {
 
     let user = await userModels.findOne({ _id: userId })
     if (!user) {
-      return res.status(404).send({ status: false, message: "UserId does not exits" })
+      return res.status(404).send({ status: false, message: "UserId does not found" })
     }
 
     const { cartId, productId, removeProduct } = requestBody
@@ -49,7 +49,7 @@ const updateCart = async function (req, res) {
 
 
     if (!cart) {
-      return res.status(404).send({ status: false, message: "cartId does not exits" })
+      return res.status(404).send({ status: false, message: "cartId does not found" })
     }
 
     //product
@@ -59,14 +59,14 @@ const updateCart = async function (req, res) {
 
     let product = await productModel.findOne({ _id: productId, isDeleted: false })
     if (!product) {
-      return res.status(404).send({ status: false, message: "productId does not exits" })
+      return res.status(404).send({ status: false, message: "productId does not found" })
     }
 
     //find if products exits in cart
     let isProductinCart = await cartModel.findOne({ items: { $elemMatch: { productId: productId } } })
 
     if (!isProductinCart) {
-      return res.status(404).send({ status: false, message: `This ${productId} product does not exits in the cart` })
+      return res.status(404).send({ status: false, message: `This ${productId} product does not found in the cart` })
     }
 
     //removeProduct validation
@@ -114,7 +114,7 @@ const updateCart = async function (req, res) {
 
       let data = await cartModel.findOneAndUpdate({ _id: cartId }, { items: arr, totalPrice: totalAmount }, { new: true })
 
-      return res.status(200).send({ status: true, message: `${productId} quantity is been reduced by 1`, data: data })
+      return res.status(200).send({ status: true, message: `${productId} quantity has been reduced by 1`, data: data })
     }
 
   } catch (err) {
