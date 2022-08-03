@@ -269,7 +269,7 @@ const loginUser = async function(req, res) {
 const getProfile = async function(req, res) {
     try {
         let userId = req.params.userId;
-        // console.log(userId);
+
         // if (!(isValid(userId))) {
         //     return res.status(400).send({ status: false, message: "Don't left UserId empty,it's required" });
         // }
@@ -304,9 +304,9 @@ const UpdateProfile = async function(req, res) {
         let data = {
             isDeleted: false,
         };
-        console.log(data)
+
         const checkFromDb = await userModel.findOne({ _id: userId });
-        console.log(checkFromDb.phone);
+
 
         if (!isValidObjectId(userId))
             return res
@@ -331,8 +331,8 @@ const UpdateProfile = async function(req, res) {
         if (fname) {
             if (!isValid(fname)) {
                 return res
-                    .status(400)
-                    .send({ status: false, message: "Provide valid Username" });
+                .status(400)
+                .send({ status: false, message: "Provide valid Username" });
             }
         }
         if (lname) {
@@ -346,14 +346,14 @@ const UpdateProfile = async function(req, res) {
         if (email) {
             if (!isValid(email)) {
                 return res
-                    .status(400)
-                    .send({ status: false, message: "Email-ID is required" });
+                .status(400)
+                .send({ status: false, message: "Email-ID is required" });
             }
 
             if (!isvalidEmail(email))
-                return res
-                    .status(400)
-                    .send({ status: false, message: "Invalid Email id." });
+            return res
+            .status(400)
+            .send({ status: false, message: "Invalid Email id." });
 
             if (!checkFromDb.email) {
                 return res.status(400).send({
@@ -366,15 +366,15 @@ const UpdateProfile = async function(req, res) {
         if (phone) {
             if (!isValid(phone)) {
                 return res
-                    .status(400)
-                    .send({ status: false, message: "phone number is required" });
+                .status(400)
+                .send({ status: false, message: "phone number is required" });
             }
 
             if (!isValidPhone(phone))
-                return res.status(400).send({
-                    status: false,
-                    message: "Phone number must be a valid Indian number.",
-                });
+            return res.status(400).send({
+                status: false,
+                message: "Phone number must be a valid Indian number.",
+            });
 
             if (!checkFromDb.phone) {
                 return res.status(400).send({
@@ -386,8 +386,8 @@ const UpdateProfile = async function(req, res) {
         if (password) {
             if (!isValid(password)) {
                 return res
-                    .status(400)
-                    .send({ status: false, message: "password is required" });
+                .status(400)
+                .send({ status: false, message: "password is required" });
             }
 
             if (password.length < 8 || password.length > 15) {
@@ -403,10 +403,11 @@ const UpdateProfile = async function(req, res) {
         if (address) {
             if (!isValid(address)) {
                 return res
-                    .status(400)
-                    .send({ status: false, message: " address is not valid" });
+                .status(400)
+                .send({ status: false, message: " address is not valid" });
             } else if (address) {
-                let address1 = JSON.parse(address);
+                let address1 = JSON.parse(address.shipping);
+
 
                 if (address1.shipping) {
                     const { street, city, pincode } = address1.shipping;
@@ -418,7 +419,7 @@ const UpdateProfile = async function(req, res) {
                             });
                         data["address.shipping.street"] = street;
 
-                        console.log(street);
+
                     }
                     if (city) {
                         if (!isValid(city))
@@ -466,10 +467,10 @@ const UpdateProfile = async function(req, res) {
                         data["address.billing.pincode"] = pincode;
                     }
                 }
-                //  data["address"] = address1;
+
+
             }
         }
-        console.log(data)
 
         const UpdateProfile = await userModel.findOneAndUpdate({ _id: userId },
             data, { new: true }
