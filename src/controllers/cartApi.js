@@ -153,7 +153,6 @@ const createCart = async function (req, res) {
           data: checkCartId,
         });
       }
-      console.log(checkCartId);
     }
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
@@ -193,14 +192,14 @@ const getCart = async function (req, res) {
     if (!user) {
       return res.status(404).send({
         status: false,
-        msg: "No such user found. Please register and try again",
+        message: "No such user found. Please register and try again",
       });
     }
     let usercartid = await cartModel.findOne({ userId: userId });
     if (!usercartid) {
       return res.status(404).send({
         status: false,
-        msg: "No such cart found. Please register and try again",
+        message: "No such cart found. Please register and try again",
       });
     }
 
@@ -235,14 +234,17 @@ const deleteCart = async function (req, res) {
     if (!Userdata) {
       return res
         .status(404)
-        .send({ status: false, msg: "No such user exists with this userID" });
+        .send({
+          status: false,
+          message: "No such user exists with this userID",
+        });
     }
 
     let usercart = await cartModel.findOne({ userId: userId });
     if (!usercart) {
       return res.status(404).send({
         status: false,
-        msg: "No such user found. Please register and try again",
+        message: "No such user found. Please register and try again",
       });
     }
     usercart.userId = userId;
@@ -251,7 +253,9 @@ const deleteCart = async function (req, res) {
     usercart.totalItems = 0;
     usercart.save();
 
-    return res.status(200).send({ status: true });
+    return res
+      .status(200)
+      .send({ status: true, message: "Cart successfully Deleted!" });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
