@@ -84,4 +84,5 @@ module.exports = {
     isValidImg,
     isValidSize,
     isValidTName,
+    isValidCurrency
 };

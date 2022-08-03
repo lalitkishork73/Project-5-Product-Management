@@ -302,12 +302,12 @@ const updateProductbyId = async function (req, res) {
 
     let data = await productModel.findById(productId)
     if (!data) return res.status(404).send({ status: false, message: "No Data found with this ID" })
-    if (data.isDeleted == true) { return res.status(404).send({ status: false, message: "This product is Deleted" }) }
+    if (data.isDeleted == true) { return res.status(400).send({ status: false, message: "This product is Deleted" }) }
 
     let body = req.body
     let files = req.files
     if (!files) {
-      if (isValidBody(body)) return res.status(400).send({ status: false, message: "Pls enter Some Data To update" })
+      if (isValidRequestBody(body)) return res.status(400).send({ status: false, message: "Pls enter Some Data To update" })
     }
     let { title, description, price, productImage, style, availableSizes, installments, isFreeShipping } = body
 
