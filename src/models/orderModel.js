@@ -18,9 +18,10 @@ const orderShema = new mongoose.Schema(
           required: true,
           min: 1,
         },
+        _id:false
       },
     ],
-
+// ,
     totalPrice: {
       type: Number,
       required: true,
@@ -44,7 +45,7 @@ const orderShema = new mongoose.Schema(
     status: {
       type: String,
       default: "pending",
-      enum: [pending, completed, cancled],
+      enum: ["pending", "completed", "cancled"],
     },
     deletedAt: { type: Date },
     isDeleted: {

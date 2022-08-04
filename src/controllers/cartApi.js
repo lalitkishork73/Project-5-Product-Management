@@ -1,5 +1,5 @@
 const cartModel = require("../models/cartModel");
-const userModel = require("../models/userModels");
+const userModel = require("../models/userModel");
 const productModel = require("../models/productModel");
 
 const {
@@ -253,8 +253,7 @@ const updateCart = async function (req, res) {
     if (!(removeProduct === 0 || removeProduct === 1)) {
       return res.status(400).send({
         status: false,
-        message:
-          "removeProduct should be 0 (product is to be removed) or 1(quantity has to be decremented by 1) ",
+        message:"removeProduct should be 0 (product is to be removed) or 1(quantity has to be decremented by 1) ",
       });
     }
     let { price } = product;
@@ -276,7 +275,7 @@ const updateCart = async function (req, res) {
             },
             { new: true }
           );
-          //pull the product from itmes  //https://stackoverflow.com/questions/15641492/mongodb-remove-object-from-array
+          //pull the product from itmes 
 
           return res.status(200).send({
             status: true,

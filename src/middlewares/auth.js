@@ -1,4 +1,4 @@
-const userModel = require("../models/userModels");
+const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const { isValidObjectId } = require("../utils/util");
 
