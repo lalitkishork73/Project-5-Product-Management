@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const userModel = require("../models/userModels");
+const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { uploadFile } = require("./awsConnect.js");
 
