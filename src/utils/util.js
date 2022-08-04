@@ -71,6 +71,12 @@ const isValidTName = (name) => {
         return true
 }
 
+function isValidStatus(value){
+
+    if( ["pending", "completed", "cancled"].indexOf(value) == -1) {return false}
+    else return true
+ }
+
 module.exports = {
     isValid,
     isValidRequestBody,
@@ -84,5 +90,6 @@ module.exports = {
     isValidImg,
     isValidSize,
     isValidTName,
-    isValidCurrency
+    isValidCurrency,
+    isValidStatus
 };

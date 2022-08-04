@@ -59,6 +59,7 @@ router.delete("/users/:userId/cart", deleteCart);
 
 //-------------------Order APIs --------------------------------//
 router.post("/users/:userId/orders",createOrder)
+router.put("/users/:userId/orders", updateOrder);
 //------------------- Exporting Modules -------------------//
 
 module.exports = router;

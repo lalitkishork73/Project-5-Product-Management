@@ -324,7 +324,7 @@ const updateCart = async function (req, res) {
   }
 };
 
-//<<============================= Get Cart Details =================================>>//
+//<<============================= Get Cart Details =================================>>// 
 
 const getCart = async function (req, res) {
   try {
@@ -422,4 +422,4 @@ const deleteCart = async function (req, res) {
   }
 };
 
-module.exports = { createCart, updateCart, getCart, deleteCart };
+module.exports = { createCart, updateCart, getCart, deleteCart }; 
