@@ -1,4 +1,4 @@
-const userModel = require("../models/userModels");
+const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const { isValidObjectId } = require("../utils/util");
 
@@ -7,9 +7,11 @@ const Authentication = async function (req, res, next) {
     // const token = req.headers["x-api-key"] || req.headers["x-Api-key"];
     // console.log(token);
     let tokenWithBearer = req.headers["authorization"];
-    
-    if(!tokenWithBearer){
-      return res.status(400).send({status:false, message: "token is required"});
+
+    if (!tokenWithBearer) {
+      return res
+        .status(400)
+        .send({ status: false, message: "token is required" });
     }
     let tokenArray = tokenWithBearer.split(" ");
     let token = tokenArray[1];
@@ -55,6 +57,5 @@ const Authorization = async function (req, res, next) {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
-
 
 module.exports = { Authentication, Authorization };
