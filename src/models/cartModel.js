@@ -3,43 +3,43 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const cartShema = new mongoose.Schema(
   {
-  userId: {
-    type: ObjectId,
-    ref: 'user',
-    required: 'userId is required',
-    trim: true,
-    unique: true
-  },
-  items: [{
-    productId: {
+    userId: {
       type: ObjectId,
-      ref: 'product',
-      required: true,
-      unique: true,
+      ref: "user",
+      required: "userId is required",
       trim: true,
-
+      unique: true,
     },
-    quantity: {
+    items: [
+      {
+        productId: {
+          type: ObjectId,
+          ref: "product",
+          required: true,
+          unique: true,
+          trim: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          trim: true,
+          min: 1,
+        },
+        _id: false,
+      },
+    ],
+    totalPrice: {
       type: Number,
       required: true,
       trim: true,
-      min: 1
     },
-_id: false
 
-  }],
-  totalPrice: {
-    type: Number,
-    required: true,
-    trim: true
+    totalItems: {
+      type: Number,
+      required: true,
+      trim: true,
+    },
   },
-
-  totalItems: {
-    type: Number,
-    required: true,
-    trim: true
-  }
- },
   { timestamps: true }
 );
 

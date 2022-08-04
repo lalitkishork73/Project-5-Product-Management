@@ -15,7 +15,7 @@ const createCart = async function (req, res) {
     const CartData = req.body;
     const userId = req.params.userId;
     let { cartId, productId, quantity } = CartData;
-    // let data = {};
+
 
     if (!isValidRequestBody(CartData)) {
       return res
@@ -35,7 +35,7 @@ const createCart = async function (req, res) {
       return res.status(400).send({ status: false, message: "User not found" });
     }
 
-    if (!isValid(productId)) {
+    if (!(productId || isValid(productId))) {
       return res
         .status(400)
         .send({ status: false, message: "Please Provide Product Id" });
