@@ -170,7 +170,7 @@ const updateCart = async function (req, res) {
       return res.status(400).send({ status: false, message: "Invalid userId in body" })
     }
 
-    let user = await userModels.findOne({ _id: userId })
+    let user = await userModel.findOne({ _id: userId })
     if (!user) {
       return res.status(404).send({ status: false, message: "UserId does not found" })
     }
@@ -267,7 +267,7 @@ const updateCart = async function (req, res) {
   }
 };
 
-//<<============================= Get Cart Details =================================>>//
+//<<============================= Get Cart Details =================================>>// 
 
 const getCart = async function (req, res) {
   try {
@@ -360,4 +360,4 @@ const deleteCart = async function (req, res) {
   }
 };
 
-module.exports = { createCart, updateCart, getCart, deleteCart };
+module.exports = { createCart, updateCart, getCart, deleteCart }; 
