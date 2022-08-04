@@ -18,3 +18,5 @@ const updateOrder = async function (req, res) {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
+
+module.exports = { createOrder, updateOrder };
