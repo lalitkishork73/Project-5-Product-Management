@@ -16,7 +16,6 @@ const createCart = async function (req, res) {
     const userId = req.params.userId;
     let { cartId, productId, quantity } = CartData;
 
-
     if (!isValidRequestBody(CartData)) {
       return res
         .status(400)
@@ -253,7 +252,8 @@ const updateCart = async function (req, res) {
     if (!(removeProduct === 0 || removeProduct === 1)) {
       return res.status(400).send({
         status: false,
-        message:"removeProduct should be 0 (product is to be removed) or 1(quantity has to be decremented by 1) ",
+        message:
+          "removeProduct should be 0 (product is to be removed) or 1(quantity has to be decremented by 1) ",
       });
     }
     let { price } = product;
@@ -264,18 +264,18 @@ const updateCart = async function (req, res) {
       if (items[i].productId.toString() == productId) {
         if (removeProduct === 0) {
           let totalAmount = totalPrice - price * findQuantity.quantity;
-          let quantity = totalItems - 1;
+          totalItems--;
 
           const wipeCart = await cartModel.findOneAndUpdate(
             { _id: cartId },
             {
               $pull: { items: { productId: productId } },
               totalPrice: totalAmount,
-              totalItems: quantity,
+              totalItems: totalItems,
             },
             { new: true }
           );
-          //pull the product from itmes 
+          //pull the product from itmes
 
           return res.status(200).send({
             status: true,
@@ -287,13 +287,14 @@ const updateCart = async function (req, res) {
         if (removeProduct === 1) {
           let totalAmount = totalPrice - price;
           items[i].quantity--;
+          totalItems--;
           if (items[i].quantity < 1) {
             const wipeCart = await cartModel.findOneAndUpdate(
               { _id: cartId },
               {
                 $pull: { items: { productId: productId } },
                 totalPrice: totalAmount,
-                totalItems: items[i].quantity,
+                totalItems: totalItems,
               },
               { new: true }
             );
@@ -324,7 +325,7 @@ const updateCart = async function (req, res) {
   }
 };
 
-//<<============================= Get Cart Details =================================>>// 
+//<<============================= Get Cart Details =================================>>//
 
 const getCart = async function (req, res) {
   try {
@@ -422,4 +423,4 @@ const deleteCart = async function (req, res) {
   }
 };
 
-module.exports = { createCart, updateCart, getCart, deleteCart }; 
+module.exports = { createCart, updateCart, getCart, deleteCart };
