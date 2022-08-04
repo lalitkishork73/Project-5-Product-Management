@@ -170,7 +170,7 @@ const updateCart = async function (req, res) {
       return res.status(400).send({ status: false, message: "Invalid userId in body" })
     }
 
-    let user = await userModels.findOne({ _id: userId })
+    let user = await userModel.findOne({ _id: userId })
     if (!user) {
       return res.status(404).send({ status: false, message: "UserId does not found" })
     }
@@ -229,7 +229,7 @@ const updateCart = async function (req, res) {
 
       let totalAmount = cart.totalPrice - (product.price * findQuantity.quantity) // substract the amount of product*quantity
 
-      await cartModel.findOneAndUpdate({ _id: cartId }, { $pull: { items: { productId: productId } } }, { new: true })   //pull the product from itmes  //https://stackoverflow.com/questions/15641492/mongodb-remove-object-from-array
+      await cartModel.findOneAndUpdate({ _id: cartId }, { $pull: { items: { productId: productId } } }, { new: true })   //pull the product from itmes  
 
       let quantity = cart.totalItems - 1
       let data = await cartModel.findOneAndUpdate({ _id: cartId }, { $set: { totalPrice: totalAmount, totalItems: quantity } }, { new: true })   //update the cart with total items and totalprice
@@ -272,7 +272,7 @@ const updateCart = async function (req, res) {
 const getCart = async function (req, res) {
   try {
     let userId = req.params.userId;
-
+    // let productId=req.params.productId
     //----------------------------------------------Validation Starts---------------------------------------//
     // validating userid from params
     if (!isValid(userId)) {
@@ -294,6 +294,13 @@ const getCart = async function (req, res) {
         message: "No such user found. Please register and try again",
       });
     }
+    // let product = await productModel.findOne({ _id: productId }).select({title:title});
+    // if (!product) {
+    //   return res.status(404).send({
+    //     status: false,
+    //     message: "No such user found. Please register and try again",
+    //   });
+    // }
     let usercartid = await cartModel.findOne({ userId: userId });
     if (!usercartid) {
       return res.status(404).send({
