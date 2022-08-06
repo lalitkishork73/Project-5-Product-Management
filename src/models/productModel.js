@@ -6,36 +6,43 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      trim: true
     },
 
     description: {
       type: String,
       required: true,
+      trim: true
     },
 
     price: {
       type: Number,
       required: true,
+      trim: true
     },
 
     currencyId: {
       type: String,
       required: true,
+      trim: true
     },
 
     currencyFormat: {
       type: String,
       required: true,
+      trim: true
     },
 
     isFreeShipping: {
       type: Boolean,
       default: false,
+      trim: true
     },
 
     productImage: {
       type: String,
       required: true,
+      trim: true
     },
 
     style: { type: String },
@@ -47,7 +54,7 @@ const productSchema = new mongoose.Schema(
       enum: ["S", "XS", "M", "X", "L", "XXL", "XL"],
     },
 
-    installments: { type: Number },
+    installments: { type: Number, trim: true },
 
     deletedAt: { type: Date, default: null },
 

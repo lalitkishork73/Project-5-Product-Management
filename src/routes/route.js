@@ -52,14 +52,16 @@ router.delete("/products/:productId", deleteProductbyId);
 
 //-------------------------- Cart APIs ----------------------//
 
-router.post("/users/:userId/cart", createCart);
-router.put("/users/:userId/cart", updateCart);
-router.get("/users/:userId/cart", getCart);
-router.delete("/users/:userId/cart", deleteCart);
+router.post("/users/:userId/cart", Authentication, Authorization, createCart);
+router.put("/users/:userId/cart", Authentication, Authorization, updateCart);
+router.get("/users/:userId/cart", Authentication, Authorization, getCart);
+router.delete("/users/:userId/cart", Authentication, Authorization, deleteCart);
 
 //-------------------Order APIs --------------------------------//
-router.post("/users/:userId/orders",createOrder)
-router.put("/users/:userId/orders", updateOrder);
+router.post("/users/:userId/orders", Authentication, Authorization, createOrder)
+router.put("/users/:userId/orders", Authentication, Authorization, updateOrder);
+
+
 //------------------- Exporting Modules -------------------//
 
 module.exports = router;
