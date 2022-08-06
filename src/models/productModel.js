@@ -6,43 +6,43 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      trim: true
+      trim: true,
     },
 
     description: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     price: {
       type: Number,
       required: true,
-      trim: true
+      trim: true,
     },
 
     currencyId: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     currencyFormat: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     isFreeShipping: {
       type: Boolean,
       default: false,
-      trim: true
+      trim: true,
     },
 
     productImage: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     style: { type: String },

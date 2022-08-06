@@ -60,10 +60,6 @@ const isValidImg = (img) => {
     return reg.test(img)
 }
 
-const isValidSize = (size) => {
-    if (size == "S" || size == "XS" || size == "M" || size == "X " || size == "L" || size == "XXL" || size == "XL")
-        return true
-}
 
 const isValidTName = (name) => {
     let tName = name.trim()
@@ -77,19 +73,40 @@ function isValidStatus(value){
     else return true
  }
 
+ const isValidSize = (size) => {
+   const validSize = size.split(",").map((x) => x.toUpperCase().trim());
+
+   let givenSizes = ["S", "XS", "M", "X", "L", "XXL", "XL"];
+
+   for (let i in validSize) {
+     if (!givenSizes.includes(validSize[i])) {
+       return false;
+     }
+   }
+   return validSize;
+ };
+
+ let regexUrl =function(value){
+   reg=/^(https[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/;
+   if(!reg.test(value)){
+    return false;
+   }
+   return true;
+ }
 module.exports = {
-    isValid,
-    isValidRequestBody,
-    isValidName,
-    isvalidEmail,
-    moblieRegex,
-    isValidObjectId,
-    isValidPassword,
-    isValidPincode,
-    validString,
-    isValidImg,
-    isValidSize,
-    isValidTName,
-    isValidCurrency,
-    isValidStatus
+  isValid,
+  isValidRequestBody,
+  isValidName,
+  isvalidEmail,
+  moblieRegex,
+  isValidObjectId,
+  isValidPassword,
+  isValidPincode,
+  validString,
+  isValidImg,
+  isValidSize,
+  isValidTName,
+  isValidCurrency,
+  isValidStatus,
+  regexUrl,
 };

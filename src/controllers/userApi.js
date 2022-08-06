@@ -4,14 +4,14 @@ const bcrypt = require("bcrypt");
 const { uploadFile } = require("./awsConnect.js");
 
 const {
-    isValid,
-    isValidRequestBody,
-    isValidName,
-    isvalidEmail,
-    moblieRegex,
-    isValidObjectId,
-    isValidPassword,
-    isValidPincode,
+  isValid,
+  isValidRequestBody,
+  isValidName,
+  isvalidEmail,
+  moblieRegex,
+  isValidObjectId,
+  isValidPassword,
+  regexUrl
 } = require("../utils/util");
 
 //<<================================= User Resgister ============================>>//
@@ -138,10 +138,7 @@ const userRegister = async function(req, res) {
                 message: "Street, city and pincode are mandatory in Shipping",
             });
 
-        /* if(!isValidPincode(pincode)){
-        return res.status(400).send({status: false,message:"Please Provide valid pincode"});
-       }
- */
+       
         if (!isValid(address.billing.street) ||
             !isValid(address.billing.city) ||
             !isValid(address.billing.pincode)
@@ -154,6 +151,13 @@ const userRegister = async function(req, res) {
         /********************************************** Create Phase **********************************************/
 
         let userImage = await uploadFile(files[0]);
+        console.log(userImage);
+        if(!regexUrl(userImage)){
+            return res.status(400).send({
+                status: false,
+                message: "NOt Valid URL created by S3",
+            });
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
