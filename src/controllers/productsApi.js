@@ -39,9 +39,7 @@ const createProducts = async function (req, res) {
         .status(400)
         .send({ status: false, message: "Provide the title Name " });
     }
-    // if (!(/^[a-zA-Z ]{2,30}$/.test(title))) {
-    //     return res.status(400).send({ status: false, message: "Enter valid  title" })
-    // }
+   
     let checkTitle = await productModel.findOne({ title: title });
     if (checkTitle) {
       return res.status(400).send({
@@ -63,11 +61,11 @@ const createProducts = async function (req, res) {
         .status(400)
         .send({ status: false, message: "price is required" });
     }
-    /* if (!/^[0-9]*$/.test(price)) {
-      return res
-        .status(400)
-        .send({ status: false, message: "price is required" });
-    } */
+   if (!/\d+(?:[.,]\d{0,2})?/.test(price)) {
+     return res
+       .status(400)
+       .send({ status: false, message: "price Must be in Numbers" });
+   }
 
     if (!isValid(currencyId)) {
       return res
@@ -114,6 +112,12 @@ const createProducts = async function (req, res) {
       return res
         .status(400)
         .send({ status: false, message: "Please Provide ProductImage" });
+    }
+    if (!isValidSize(availableSizes)) {
+      return res.status(400).send({
+        status: false,
+        message: `size should be one these only "S", "XS", "M", "X", "L", "XXL", "XL" `,
+      });
     }
 
     let sizes = availableSizes

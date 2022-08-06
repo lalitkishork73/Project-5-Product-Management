@@ -42,7 +42,7 @@ const Authorization = async function (req, res, next) {
     if (!isValidObjectId(UserId)) {
       return res
         .status(400)
-        .send({ status: false, message: `Book id ${UserId} is invalid` });
+        .send({ status: false, message: `UserId ${UserId} is invalid` });
     }
     const findUserId = await userModel.findOne({ _id: UserId });
     if (!findUserId)
