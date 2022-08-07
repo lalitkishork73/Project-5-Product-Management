@@ -40,7 +40,7 @@ const createProducts = async function (req, res) {
         .send({ status: false, message: "Provide the title Name " });
     }
 
-    let checkTitle = await productModel.findOne({ title: title });
+    let checkTitle = await productModel.findOne({ title: title.toLowerCase() });
     if (checkTitle) {
       return res.status(400).send({
         status: false,
@@ -363,15 +363,19 @@ const updateProductbyId = async function (req, res) {
         return res
           .status(400)
           .send({ status: false, message: "Enter Valid Title Name" });
-      if (await productModel.findOne({ title: title }))
+
+          let istitle = await productModel.findOne({ title: title.toLowerCase() });
+
+      if (istitle)
         return res
           .status(400)
           .send({ status: false, message: `${title} is already exists` });
+
       let title1 = title
         .split(" ")
         .filter((e) => e)
         .join(" ");
-      data.title = title1;
+      data.title = title1.toLowerCase();
     }
 
     if ("description" in body) {
@@ -461,7 +465,7 @@ const updateProductbyId = async function (req, res) {
         .findById(productId)
         .select({ availableSizes: 1, _id: 0 });
       let value = savedSize["availableSizes"].valueOf();
-    
+
       let savedata = await productModel.findOneAndUpdate(
         { _id: productId },
         { availableSizes: sizes },
