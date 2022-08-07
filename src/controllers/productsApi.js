@@ -461,11 +461,7 @@ const updateProductbyId = async function (req, res) {
         .findById(productId)
         .select({ availableSizes: 1, _id: 0 });
       let value = savedSize["availableSizes"].valueOf();
-      //for (let i = 0; i < sizes.length; i++) {
-      // if (value.includes(sizes[i])) {
-      //   return res.status(400).send({ status: false, message: `Size ${sizes[i]} is already Exists Choose Another One` })
-      // }
-      // else {
+    
       let savedata = await productModel.findOneAndUpdate(
         { _id: productId },
         { availableSizes: sizes },
