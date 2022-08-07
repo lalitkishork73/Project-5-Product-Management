@@ -70,7 +70,7 @@ const createOrder = async function (req, res) {
       ) {
         return res.status(400).send({
           status: false,
-          message: "cancellable should have only true/false in it",
+          message: "cancellable should have only true/false in it"
         });
       }
     }
@@ -80,9 +80,9 @@ const createOrder = async function (req, res) {
       { userId: userId },
       { items: [], totalPrice: 0, totalItems: 0 }
     );
-    res.status(200).send({
+    res.status(201).send({
       status: true,
-      message: "order created successfully",
+      message: "Success",
       data: orders,
     });
   } catch (err) {
@@ -173,7 +173,7 @@ const updateOrder = async function (req, res) {
       { $set: { items: [], totalPrice: 0, totalItems: 0 } },
       { new: true }
     );
-    return res.status(200).send({ status: true, data: orderStatus });
+    return res.status(200).send({ status: true, message:"Success",data: orderStatus });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }

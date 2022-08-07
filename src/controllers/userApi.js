@@ -256,7 +256,7 @@ const loginUser = async function (req, res) {
           status: true,
           message: "Successfully loggedin",
           userId: user._id,
-          token: token,
+          data: token,
         });
       } else {
         // insert access denied code here
