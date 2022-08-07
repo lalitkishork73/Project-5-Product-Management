@@ -378,7 +378,7 @@ const UpdateProfile = async function (req, res) {
           .send({ status: false, message: "phone number is required" });
       }
 
-      if (!isValidPhone(phone))
+      if (!moblieRegex(phone))
         return res.status(400).send({
           status: false,
           message: "Phone number must be a valid Indian number.",
