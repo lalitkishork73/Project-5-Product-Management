@@ -53,7 +53,7 @@ const createCart = async function (req, res) {
 
     if (!checkProduct) {
       return res
-        .status(400)
+        .status(404)
         .send({ status: false, message: "No Such Product Exist" });
     }
 
@@ -108,7 +108,7 @@ const createCart = async function (req, res) {
       let checkCartId = await cartModel.findOne({ _id: cartId });
 
       if (!checkCartId) {
-        return res.status(400).send({
+        return res.status(404).send({
           status: false,
           message: `cart not exist with this id ${cartId} so create cart first`,
         });
@@ -289,7 +289,6 @@ const updateCart = async function (req, res) {
           let totalAmount = totalPrice - price;
           items[i].quantity--;
           totalItems--;
-          console.log(items[i].quantity)
 
           if (items[i].quantity < 1) {
             const wipeCart = await cartModel.findOneAndUpdate(
@@ -355,13 +354,7 @@ const getCart = async function (req, res) {
         message: "No such user found. Please register and try again",
       });
     }
-    // let product = await productModel.findOne({ _id: productId }).select({title:title});
-    // if (!product) {
-    //   return res.status(404).send({
-    //     status: false,
-    //     message: "No such user found. Please register and try again",
-    //   });
-    // }
+  
     let usercartid = await cartModel.findOne({ userId: userId });
     if (!usercartid) {
       return res.status(404).send({

@@ -373,6 +373,7 @@ const updateProductbyId = async function (req, res) {
         .join(" ");
       data.title = title1;
     }
+
     if ("description" in body) {
       if (!isValid(description))
         return res
