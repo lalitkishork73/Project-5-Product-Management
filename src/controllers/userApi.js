@@ -59,12 +59,10 @@ const userRegister = async function (req, res) {
     }
 
     if (!isvalidEmail(email))
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "Invalid Email id. Ex: example12@gmail.com",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "Invalid Email id. Ex: example12@gmail.com",
+      });
 
     const checkEmailFromDb = await userModel.findOne({ email: email });
 
@@ -234,7 +232,6 @@ const loginUser = async function (req, res) {
         .status(401)
         .send({ status: false, message: "Please use valid credentials" });
 
-
     bcrypt.compare(password, user.password, function (err, result) {
       hasAccess(result);
     });
@@ -347,8 +344,8 @@ const UpdateProfile = async function (req, res) {
     if (lname) {
       if (!isValid(lname)) {
         return res
-        .status(400)
-        .send({ status: false, message: "Provide valid Username" });
+          .status(400)
+          .send({ status: false, message: "Provide valid Username" });
       }
       data["lname"] = lname;
     }
@@ -356,14 +353,14 @@ const UpdateProfile = async function (req, res) {
     if (email) {
       if (!isValid(email)) {
         return res
-        .status(400)
-        .send({ status: false, message: "Email-ID is required" });
+          .status(400)
+          .send({ status: false, message: "Email-ID is required" });
       }
 
       if (!isvalidEmail(email))
-      return res
-      .status(400)
-      .send({ status: false, message: "Invalid Email id." });
+        return res
+          .status(400)
+          .send({ status: false, message: "Invalid Email id." });
 
       if (!checkFromDb.email) {
         return res.status(400).send({
@@ -419,7 +416,7 @@ const UpdateProfile = async function (req, res) {
           .status(400)
           .send({ status: false, message: " address is not valid" });
       } else if (address) {
-        let address1 = JSON.parse(address.shipping);
+        let address1 = JSON.parse(address);
 
         if (address1.shipping) {
           const { street, city, pincode } = address1.shipping;
