@@ -250,9 +250,9 @@ const loginUser = async function (req, res) {
           { expiresIn: "24h" }
         );
         // res.setHeader("x-api-key", token);
-        res.setHeader("Authorization", "Bearer ", token);
+        res.setHeader("Authorization", "Bearer", token);
 
-        return res.status(200).send({
+        return res.status(201).send({
           status: true,
           message: "Successfully loggedin",
           userId: user._id,

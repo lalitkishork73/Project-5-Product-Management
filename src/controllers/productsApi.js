@@ -39,7 +39,7 @@ const createProducts = async function (req, res) {
         .status(400)
         .send({ status: false, message: "Provide the title Name " });
     }
-   
+
     let checkTitle = await productModel.findOne({ title: title });
     if (checkTitle) {
       return res.status(400).send({
@@ -61,11 +61,11 @@ const createProducts = async function (req, res) {
         .status(400)
         .send({ status: false, message: "price is required" });
     }
-   if (!/\d+(?:[.,]\d{0,2})?/.test(price)) {
-     return res
-       .status(400)
-       .send({ status: false, message: "price Must be in Numbers" });
-   }
+    if (!/\d+(?:[.,]\d{0,2})?/.test(price)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "price Must be in Numbers" });
+    }
 
     if (!isValid(currencyId)) {
       return res
@@ -77,6 +77,7 @@ const createProducts = async function (req, res) {
         .status(400)
         .send({ status: false, message: "CurrencyId should be in INR" });
     }
+
     if (!currencyFormat) {
       return res
         .status(400)
@@ -131,7 +132,7 @@ const createProducts = async function (req, res) {
     const createdProduct = await productModel.create(data);
     return res.status(201).send({
       status: true,
-      message: "Product is Created Successfully",
+      message: "Success",
       data: createdProduct,
     });
   } catch (err) {
@@ -269,7 +270,7 @@ const getProducts = async function (req, res) {
 
     return res.status(200).send({
       status: true,
-      message: "Product list",
+      message: "Success",
       data: products,
     });
   } catch (err) {
@@ -488,9 +489,11 @@ const updateProductbyId = async function (req, res) {
     }
 
     data.save();
-    res
-      .status(200)
-      .send({ status: false, message: "Updated Successfully", data: data });
+    res.status(200).send({
+      status: true,
+      message: "Update product details is successful",
+      data: data,
+    });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
