@@ -30,25 +30,25 @@ const createOrder = async function (req, res) {
       return res.status(404).send({ status: false, message: "User ID not found" });
     }
     const { items, totalItems, totalPrice } = existCart
-    
+
     if (totalItems == 0) {
       return res.status(202).send({ status: false, message: "Order Alredy placed from this cart Or cart is empty" });
     }
     let totalQuantity = items.map(x => x.quantity).reduce((a, b) => a + b);
-    
+
     let obj = { userId: userId, totalQuantity: totalQuantity, items: items, totalItems: totalItems, totalPrice: totalPrice, cancellable: requestBody.cancellable }
-    
+
     if (requestBody.cancellable) {
       if (!((requestBody.cancellable == "true") || (requestBody.cancellable == "false"))) {
         return res.status(400).send({ status: false, message: "cancellable should have only true/false in it" })
       }
-      
+
     }
     let orders = await orderModel.create(obj)
-    
+
     await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalPrice: 0, totalItems: 0 })
-    res.status(200).send({ status: true, msg: 'order created successfully', data: orders })
-    
+    res.status(200).send({ status: true, message: 'order created successfully', data: orders })
+
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
@@ -81,12 +81,12 @@ const updateOrder = async function (req, res) {
       return res.status(400).send({ status: false, message: "Please provide VALID orderId in request body" })
     }
 
-    let orderPresent = await orderModel.findOne({ _id: orderId, isDeleted: false }); 
+    let orderPresent = await orderModel.findOne({ _id: orderId, isDeleted: false });
 
     if (!orderPresent) {
       return res.status(404).send({ status: false, message: "Order Not Found" })
     }
-    
+
     let orderUser = orderPresent.userId.toString()
 
     if (orderUser != userId) {
@@ -104,7 +104,7 @@ const updateOrder = async function (req, res) {
     if(status =='cancled' && orderPresent.cancellable === false){
       return res.status(400).send({ status: false, message: "Order cannot be cancled" })
     }
-    
+
     let orderStatus = await orderModel.findOneAndUpdate({ _id: orderId }, { $set: requestBody }, { new: true })
     await cartModel.findOneAndUpdate({ userId: userId }, { $set: { items: [], totalPrice: 0, totalItems: 0 } }, { new: true })
     return res.status(200).send({ status: true, data: orderStatus })
