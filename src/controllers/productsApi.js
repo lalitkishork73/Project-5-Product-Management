@@ -176,7 +176,6 @@ const getProducts = async function (req, res) {
     if (queryData.name) {
       filterData["title"] = {};
       filterData["title"] = queryData.name.toLowerCase();
-      filterData["title"]["$options"] = "i"; //"i" for case insensitive.
     }
     // price > 300
     if (!validString(queryData.priceGreaterThan)) {
@@ -336,13 +335,21 @@ const updateProductbyId = async function (req, res) {
     }
 
     let body = req.body;
-    let files = req.files;
-    if (!files) {
-      if (isValidRequestBody(body))
-        return res
-          .status(400)
-          .send({ status: false, message: "Pls enter Some Data To update" });
+
+    if (!isValidRequestBody(body)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "Pls enter Some Data To update" });
     }
+
+    let files = req.files;
+
+    if (!files) {
+      return res
+        .status(400)
+        .send({ status: false, message: "Pls provide files" });
+    }
+
     let {
       title,
       description,
@@ -364,7 +371,7 @@ const updateProductbyId = async function (req, res) {
           .status(400)
           .send({ status: false, message: "Enter Valid Title Name" });
 
-          let istitle = await productModel.findOne({ title: title.toLowerCase() });
+      let istitle = await productModel.findOne({ title: title.toLowerCase() });
 
       if (istitle)
         return res
