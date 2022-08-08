@@ -468,10 +468,10 @@ const updateProductbyId = async function (req, res) {
             message: `This Size ( ${sizes[i]} ) is not from these ['S', 'XS','M','X', 'L','XXL','XL']`,
           });
       }
-      let savedSize = await productModel
-        .findById(productId)
-        .select({ availableSizes: 1, _id: 0 });
-      let value = savedSize["availableSizes"].valueOf();
+      // let savedSize = await productModel
+      //   .findById(productId)
+      //   .select({ availableSizes: 1, _id: 0 });
+      // // let value = savedSize["availableSizes"].valueOf();
 
       let savedata = await productModel.findOneAndUpdate(
         { _id: productId },
