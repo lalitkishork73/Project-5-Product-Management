@@ -19,16 +19,20 @@ const Authentication = async function (req, res, next) {
     if (!token) {
       return res.status(404).send({ status: false, message: "Invalid Token" });
     }
-    const decodedToken = jwt.verify(token, "project-5-group27");
-    let LoginUserId = decodedToken.userId;
-    if (!decodedToken) {
-      return res
-        .status(401)
-        .send({ status: false, message: "Warning unauthorized" });
-    }
-
-    req["userId"] = LoginUserId;
-    next();
+    let decodedToken;
+     jwt.verify(token, "project-5-group27",(err,decode)=>{
+      if(err){
+        return res
+          .status(401)
+          .send({ status: false, message: err.message });
+      }
+      else{
+        decodedToken=decode;
+        let LoginUserId = decodedToken.userId;
+        req["userId"] = LoginUserId;
+        next();
+      }
+    });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
   }
