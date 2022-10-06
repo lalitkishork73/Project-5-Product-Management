@@ -6,7 +6,7 @@ const { default: mongoose } = require("mongoose");
 const route = require("./routes/route.js");
 const multer = require("multer");
 const app = express();
-const testPort = 3000;
+const testPort = 3003;
 
 app.use(bodyParser.json());
 app.use(multer().any());
